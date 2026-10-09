@@ -1,27 +1,27 @@
 [
   {
     "id": 101,
-    "nome": "Produto 101",
-    "preco": 19.9
+    "nome": "Garrafa Especial",
+    "preco": 72.87
   },
   {
     "id": 102,
-    "nome": "Produto 102",
-    "preco": 29.9
+    "nome": "Relógio Especial",
+    "preco": 72.75
   },
   {
     "id": 103,
-    "nome": "Produto 103",
-    "preco": 39.9
+    "nome": "Mochila Especial",
+    "preco": 111.06
   },
   {
     "id": 104,
-    "nome": "Produto 104",
-    "preco": 49.9
+    "nome": "Camiseta Simples",
+    "preco": 22.99
   },
   {
     "id": 105,
-    "nome": "Produto 105",
-    "preco": 59.9
+    "nome": "Caneca Grande",
+    "preco": 71.13
   }
 ]

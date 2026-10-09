@@ -1,74 +1,63 @@
 "use client";
 
-import { use } from "react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
-export default function ProdutoDetalhes({ params }) {
-    const router = useRouter();
-    const { id } = use(params);
+export default function DetalheProduto() {
+  // useParams lê o [id] da URL. Em /produtos/101, id vale "101"
+  const { id } = useParams();
 
-    const [produto, setProduto] = useState(null);
-    const [carregando, setCarregando] = useState(true);
-    const [erro, setErro] = useState("");
+  const [produto, setProduto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetch("/produtos.json")
-            .then((resposta) => {
-                if (!resposta.ok) {
-                    throw new Error("Erro ao carregar produtos.");
-                }
+  useEffect(() => {
+    async function buscarProduto() {
+      try {
+        const resposta = await fetch("/produtos.json");
 
-                return resposta.json();
-            })
-            .then((produtos) => {
-                const encontrado = produtos.find(
-                    (produto) => String(produto.id) === String(id)
-                );
+        if (!resposta.ok) {
+          throw new Error("Não foi possível carregar os produtos.");
+        }
 
-                if (!encontrado) {
-                    throw new Error("Produto não encontrado.");
-                }
+        const dados = await resposta.json();
+        // O id da URL é texto, por isso comparamos com Number(id)
+        const encontrado = dados.find((item) => item.id === Number(id));
 
-                setProduto(encontrado);
-            })
-            .catch(() => {
-                setErro("Produto não encontrado.");
-            })
-            .finally(() => {
-                setCarregando(false);
-            });
-    }, [id]);
+        if (!encontrado) {
+          throw new Error(`Produto número ${id} não encontrado.`);
+        }
 
-    if (carregando) {
-        return <p>Carregando produto...</p>;
+        setProduto(encontrado);
+      } catch (erro) {
+        setError(erro.message);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    if (erro) {
-        return (
-            <main>
-                <p>{erro}</p>
+    buscarProduto();
+  }, [id]);
 
-                <button onClick={() => router.push("/produtos")}>
-                    Voltar para Produtos
-                </button>
-            </main>
-        );
-    }
+  return (
+    <section>
+      <h1>Detalhes do produto</h1>
 
-    return (
-        <main>
-            <h1>Detalhes do Produto</h1>
+      {loading && <p>Carregando...</p>}
+      {error && <p className="erro">Erro: {error}</p>}
 
-            <p>Produto: {produto.nome}</p>
+      {produto && (
+        <div className="detalhe">
+          <p><strong>Número:</strong> {produto.id}</p>
+          <p><strong>Nome:</strong> {produto.nome}</p>
+          <p><strong>Preço:</strong> R$ {produto.preco.toFixed(2).replace(".", ",")}</p>
+        </div>
+      )}
 
-            <p>ID: {produto.id}</p>
-
-            <p>Preço: R$ {produto.preco.toFixed(2)}</p>
-
-            <button onClick={() => router.push("/produtos")}>
-                Voltar para Produtos
-            </button>
-        </main>
-    );
+      <Link href="/produtos" className="botao">
+        Voltar para Produtos
+      </Link>
+    </section>
+  );
 }

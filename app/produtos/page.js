@@ -1,59 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar";
-import Container from "../../components/Container";
-import ProdutoCard from "../../components/ProdutoCard";
+import { useState, useEffect } from "react";
+import Container from "@/components/Container";
+import ProdutoCard from "@/components/ProdutoCard";
 
 export default function Produtos() {
-    const [produtos, setProdutos] = useState([]);
-    const [carregando, setCarregando] = useState(true);
-    const [erro, setErro] = useState("");
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetch("/produtos.json")
-            .then((resposta) => {
-                if (!resposta.ok) {
-                    throw new Error("Erro ao carregar produtos.");
-                }
+  useEffect(() => {
+    async function buscarProdutos() {
+      try {
+        const resposta = await fetch("/produtos.json");
 
-                return resposta.json();
-            })
-            .then((dados) => {
-                setProdutos(dados);
-            })
-            .catch(() => {
-                setErro("Não foi possível carregar os produtos.");
-            })
-            .finally(() => {
-                setCarregando(false);
-            });
-    }, []);
+        if (!resposta.ok) {
+          throw new Error("Não foi possível carregar os produtos.");
+        }
 
-    return (
-        <>
-            <Navbar />
+        const dados = await resposta.json();
+        setProdutos(dados);
+      } catch (erro) {
+        setError(erro.message);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-            <main>
-                <Container titulo="Nossos Produtos">
-                    {carregando && <p>Carregando produtos...</p>}
+    buscarProdutos();
+  }, []);
 
-                    {erro && <p>{erro}</p>}
+  if (loading) {
+    return <p>Carregando...</p>;
+  }
 
-                    {!carregando && !erro && (
-                        <div className="produtos-grid">
-                            {produtos.map((produto) => (
-                                <ProdutoCard
-                                    key={produto.id}
-                                    id={produto.id}
-                                    nome={produto.nome}
-                                    preco={produto.preco}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </Container>
-            </main>
-        </>
-    );
+  if (error) {
+    return <p className="erro">Erro: {error}</p>;
+  }
+
+  return (
+    <Container titulo="Nossos Produtos">
+      <div className="lista-cards">
+        {produtos.map((produto) => (
+          <ProdutoCard
+            key={produto.id}
+            id={produto.id}
+            nome={produto.nome}
+            preco={produto.preco}
+          />
+        ))}
+      </div>
+    </Container>
+  );
 }

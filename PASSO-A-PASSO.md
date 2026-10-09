@@ -724,15 +724,43 @@ Abra `http://localhost:3000`.
 | O que testar | Resultado esperado |
 |---|---|
 | Clicar em **Home**, **Sobre** e **Produtos** | A página troca sem recarregar |
-| Abrir **Produtos** | "Carregando..." rápido e depois os cartões dentro da caixa "Nossos Produtos" |
+| Abrir **Produtos** | "Carregando..." rápido e depois o título "Nossos Produtos" e os cartões em grade |
+| Passar o mouse sobre um cartão | O cartão sobe um pouco e ganha sombra |
 | Clicar em **+** e **-** em um cartão | Só a quantidade daquele cartão muda, e ela nunca fica negativa |
 | Clicar em **Ver detalhes** do primeiro produto | Vai para `/produtos/101` com número, nome e preço |
 | Digitar `/produtos/999` na barra de endereço | "Erro: Produto número 999 não encontrado." |
 | Clicar em **Voltar para Produtos** | Volta para a listagem |
 | Parar o servidor, rodar `node gerar-produtos.js 10` e rodar `npm run dev` de novo | A listagem passa a mostrar 10 produtos |
 
+## Como rodar o projeto baixado do GitHub
+
+A pasta `node_modules` não vai para o GitHub, então depois de baixar o projeto é preciso instalar as dependências uma vez.
+
+**1. Baixe o repositório.** Pode ser pelo botão verde **Code > Download ZIP** no GitHub (depois extraia o .zip) ou pelo terminal:
+
+```
+git clone https://github.com/CLAUDINEIAOLIVEIRA/P1-Web2-exe5
+```
+
+**2. Entre na pasta do projeto.** 
+
+```
+cd P1-Web2-exe5
+```
+
+**3. Instale as dependências e rode.**
+
+```
+npm install
+npm run dev
+```
+
+Abra `http://localhost:3000` no navegador. O arquivo `public/produtos.json` já vem com 5 produtos; para gerar outra quantidade, rode `node gerar-produtos.js 10` antes do `npm run dev`.
+
 ## Problemas comuns
 
+- **Erro `Não foi possível encontrar um parâmetro posicional que aceite o argumento` ao usar `cd`**: o nome da pasta tem espaço (por exemplo, `Exercicio 1`). Coloque o caminho entre aspas: `cd "Exercicio 1"`. Outra forma é digitar o começo do nome e apertar **Tab**, que o terminal completa e coloca as aspas sozinho.
+- **Erro `Não é possível localizar o caminho ... porque ele não existe` ao usar `cd`**: o terminal está em outra pasta. Veja o caminho que aparece antes do `>` no terminal. Para subir uma pasta, use `cd ..`.
 - **Erro `You're importing a component that needs useState...`**: faltou o `"use client"` na primeira linha do arquivo.
 - **"Erro: Não foi possível carregar os produtos."**: o `produtos.json` não existe ou não está na pasta `public`. Rode `node gerar-produtos.js 5`.
 - **Erro `require is not defined in ES module scope` ao rodar o script**: o `package.json` ganhou `"type": "module"`. Tire essa linha ou troque o `require` por `import fs from "fs";`.
